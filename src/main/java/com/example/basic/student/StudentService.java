@@ -1,5 +1,6 @@
 package com.example.basic.student;
 
+import com.example.basic.Exception.ApiRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +22,6 @@ public class StudentService {
     }
 
     public List<Student> getStudents(){
-        /*return Arrays.asList(
-                new Student(1L, "germany" , "best@germany.com", LocalDate.of(2000, Month.JANUARY, 28) , 20)
-        );*/
         return  studentRepository.findAll();
     }
 
@@ -31,7 +29,7 @@ public class StudentService {
         Optional<Student> studentOptional= studentRepository.findStudentByEmail(student.getEmail());
         if(studentOptional.isPresent()){
             System.out.println("emailPresent opti");
-            throw  new IllegalStateException("Email taken");
+            throw new ApiRequestException("Email taken");
         }
         studentRepository.save(student);
     }
@@ -39,7 +37,7 @@ public class StudentService {
     public void deleteStudent(long studentId) {
         boolean exists = studentRepository.existsById(studentId);
         if(!exists){
-            throw  new IllegalStateException("Student with "+studentId+ " not exists");
+            throw new ApiRequestException("Student with "+studentId+ " not exists");
         }
         studentRepository.deleteById(studentId);
     }
@@ -56,7 +54,7 @@ public class StudentService {
         if(email !=null && email.length() >0 && !Objects.equals(student.getEmail(),email)){
             Optional<Student> optionalStudent = studentRepository.findStudentByEmail(email);
             if(optionalStudent.isPresent()){
-                throw  new IllegalStateException("Email taken");
+                throw new ApiRequestException("Email taken");
             }
             student.setEmail(email);
         }
